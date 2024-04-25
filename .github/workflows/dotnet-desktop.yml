@@ -50,9 +50,9 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Debug, ExportRelease]
+        configuration: [Debug]
 
-    runs-on: window-latest  # For a list of available runner types, refer to
+    runs-on: ubuntu-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
@@ -66,23 +66,20 @@ jobs:
 
     - name: Set up Godot
       run: |
-        curl -o /tmp/Godot_v4.2.2-stable_win64.exe.zip https://downloads.tuxfamily.org/godotengine/4.2.2/Godot_v4.2.2-stable_win64.exe.zip
-        mkdir -p C:\godot
-        powershell -Command "Expand-Archive -Path '/tmp/Godot_v4.2.2-stable_win64.exe.zip' -DestinationPath 'C:\godot'"
+        mkdir -p ~/godot
+        wget -O ~/godot/Godot_v4.2.2-stable_linux.x86_64.zip https://downloads.tuxfamily.org/godotengine/4.2.2/Godot_v4.2.2-stable_linux.x86_64.zip
+        unzip ~/godot/Godot_v4.2.2-stable_linux.x86_64.zip -d ~/godot
+        chmod +x ~/godot/Godot_v4.2.2-stable_linux.x86_64.zip
     
     - name: Make new directory
       run: mkdir -v -p build/
 
-    - name: Build game
-      run: |
-        C:\godot\Godot_v4.2.2-stable_win64.exe --build-only
-
     - name: Export
-      run: C:\godot\Godot_v4.2.2-stable_win64.exe --export "Windows Desktop" "builds/my_game_windows.zip"
+      run: ~/godot/Godot_v4.2.2-stable_linux.x86_64 --export-debug "Windows Desktop" "builds/my_game_windows.exe" --headless
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
       with:
         name: my_game
-        path: builds/my_game_windows.zip
+        path: builds
 
