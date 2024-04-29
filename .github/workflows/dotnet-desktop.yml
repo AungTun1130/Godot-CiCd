@@ -66,16 +66,19 @@ jobs:
 
     - name: Set up Godot
       run: |
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
         mkdir -p ~/godot
-        wget -O ~/godot/Godot_v4.2.2-stable_linux.x86_64.zip https://downloads.tuxfamily.org/godotengine/4.2.2/Godot_v4.2.2-stable_linux.x86_64.zip
-        unzip ~/godot/Godot_v4.2.2-stable_linux.x86_64.zip -d ~/godot
-        chmod +x ~/godot/Godot_v4.2.2-stable_linux.x86_64.zip
+        wget -O godot.zip https://downloads.tuxfamily.org/godotengine/4.2.2/Godot_v4.2.2-stable_linux.x86_64.zip
+        unzip godot.zip
+        sudo mv Godot_v4.2.2-stable_linux.x86_64 /usr/local/bin/godot
+        chmod +x /usr/local/bin/godot
     
     - name: Make new directory
       run: mkdir -v -p build/
 
     - name: Export
-      run: ~/godot/Godot_v4.2.2-stable_linux.x86_64 --export-debug "Windows Desktop" "builds/my_game_windows.exe" --headless
+      run: godot --export-debug "Windows Desktop" "builds/my_game_windows.exe" --headless
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
