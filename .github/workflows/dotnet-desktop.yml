@@ -81,7 +81,7 @@ jobs:
         pwd
         ls ${{ github.workspace }}
     - name: Export
-      run: godot --headless --path ${{ github.workspace }} --export-release "Windows Desktop" "builds/my_game_windows.exe"
+      run: godot --headless --path ${{ github.workspace }} --export-release "Linux/X11" "builds/my_game_windows.zip"
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
