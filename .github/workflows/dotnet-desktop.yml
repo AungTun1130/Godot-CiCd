@@ -86,12 +86,12 @@ jobs:
 
     - name: Export
       run: |
-        godot --headless --path ${{ github.workspace }} --export-release "Windows Desktop" "builds/windowBuild.zip"
+        godot --headless --path ${{ github.workspace }} --export-release "Windows Desktop" "builds/windowBuild.exe"
         ls ${{ github.workspace }}/builds
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
       with:
         name: my_game
-        path: builds/windowBuild.zip
+        path: builds
 
