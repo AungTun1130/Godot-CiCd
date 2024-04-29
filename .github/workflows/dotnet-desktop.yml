@@ -76,7 +76,10 @@ jobs:
     
     - name: Make new directory
       run: mkdir -v -p build/
-
+      
+    - name: Print current path
+      run: |
+        pwd
     - name: Export
       run: godot --export-debug "Windows Desktop" "builds/my_game_windows.exe" --headless
 
