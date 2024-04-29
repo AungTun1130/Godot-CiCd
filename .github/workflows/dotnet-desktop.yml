@@ -85,11 +85,11 @@ jobs:
         ls "/home/runner/.local/share/godot/export_templates/4.2.2.stable"
 
     - name: Export
-      run: godot --headless --path ${{ github.workspace }} --export-release "Windows Desktop" "builds/my_game_windows.zip"
+      run: godot --headless --path ${{ github.workspace }} --export-release "Windows Desktop" "builds/windowBuild"
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
       with:
         name: my_game
-        path: builds
+        path: builds/windowBuild
 
