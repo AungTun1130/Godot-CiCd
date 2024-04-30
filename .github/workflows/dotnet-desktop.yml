@@ -76,7 +76,7 @@ jobs:
         mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/4.2.2.stable
 
     - name: Make new directory
-      run: mkdir -p ${{ github.workspace }}/builds
+      run: mkdir -p ${{ github.workspace }}/builds/Windows
 
     - name: Print current path
       run: |
@@ -90,12 +90,12 @@ jobs:
 
     - name: Export
       run: |
-        godot --headless --path ${{ github.workspace }}/GodotProject --export-release "Windows Desktop" "${{ github.workspace }}/builds/windowBuild.exe"
+        godot --headless --path ${{ github.workspace }}/GodotProject --export-release "Windows Desktop" "${{ github.workspace }}/builds/Windows/windowBuild.exe"
         ls ${{ github.workspace }}/builds
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
       with:
         name: my_game
-        path: builds
+        path: builds/Windows
 
