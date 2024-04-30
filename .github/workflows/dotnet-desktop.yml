@@ -76,17 +76,21 @@ jobs:
         mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/4.2.2.stable
 
     - name: Make new directory
-      run: mkdir -v -p builds/
+      run: mkdir -p ${{ github.workspace }}/builds
 
     - name: Print current path
       run: |
         pwd
         ls ${{ github.workspace }}
-        ls "/home/runner/.local/share/godot/export_templates/4.2.2.stable"
+    #    ls "/home/runner/.local/share/godot/export_templates/4.2.2.stable"
+
+    - name: Verify Godot project directory
+      run: |
+        ls -la ${{ github.workspace }}/GodotProject
 
     - name: Export
       run: |
-        godot --headless --path ${{ github.workspace }} --export-release "Windows Desktop" "builds/windowBuild.exe"
+        godot --headless --path ${{ github.workspace }}/GodotProject --export-release "Windows Desktop" "${{ github.workspace }}/builds/windowBuild.exe"
         ls ${{ github.workspace }}/builds
 
     - name: Upload built game
