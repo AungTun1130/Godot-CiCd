@@ -43,60 +43,54 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+env:
+  GODOT_VERSION: 4.2.2
 jobs:
 
-  build:
-    runs-on: ubuntu-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+  build-window:
+    runs-on: ubuntu-20.04
 
-    env:
-      Solution_Name: Godot Project.sln                        # Replace with your solution name, i.e. MyWpfApp.sln.
+    container:
+      image: barichello/godot-ci:mono-latest
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
       with:
-        fetch-depth: 0
+        lfs: true
 
-    - name: Set up Godot
+    #- name: Set up Godot
+    #  run: |
+    #    mkdir -p ~/godot
+    #    wget --no-verbose -O godot_mono.zip https://downloads.tuxfamily.org/godotengine/4.2.2/mono/Godot_v4.2.2-stable_mono_linux_x86_64.zip
+    #    unzip godot_mono.zip
+    #    sudo mv Godot_v4.2.2-stable_mono_linux_x86_64 /usr/local/bin/godot
+    #    sudo chmod +x /usr/local/bin/godot
+#
+    #- name: Download export template
+    #  run: |
+    #    mkdir -p ~/.local/share/godot/export_templates
+    #    wget --no-verbose -O export_templates.zip https://downloads.tuxfamily.org/godotengine/4.2.2/mono/Godot_v4.2.2-stable_mono_export_templates.tpz
+    #    unzip -d ~/.local/share/godot/export_templates export_templates.zip
+    #    mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/4.2.2.stable.mono
+    - name: Setup
       run: |
-        mkdir -p ~/godot
-        wget --no-verbose -O godot_mono.zip https://downloads.tuxfamily.org/godotengine/4.2.2/mono/Godot_v4.2.2-stable_mono_linux_x86_64.zip
-        unzip godot_mono.zip
-        sudo mv Godot_v4.2.2-stable_mono_linux_x86_64 /usr/local/bin/godot
-        ls -la /usr/local/bin/godot
-        sudo chmod +x /usr/local/bin/godot
-        /usr/local/bin/godot/Godot_v4.2.2-stable_mono_linux.x86_64 --version
-
-    - name: Download export template
-      run: |
-        mkdir -p ~/.local/share/godot/export_templates
-        wget --no-verbose -O export_templates.zip https://downloads.tuxfamily.org/godotengine/4.2.2/mono/Godot_v4.2.2-stable_mono_export_templates.tpz
-        unzip -d ~/.local/share/godot/export_templates export_templates.zip
-        mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/4.2.2.stable.mono
+        mkdir -v -p ~/.local/share/godot/export_templates/
+        mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
 
     - name: Make new directory
       run: mkdir -p ${{ github.workspace }}/builds/Windows
 
-    - name: Print current path
-      run: |
-        pwd
-        ls ${{ github.workspace }}
-    #    ls "/home/runner/.local/share/godot/export_templates/4.2.2.stable"
-
     - name: Verify Godot project directory
       run: |
-        ls -la ${{ github.workspace }}/GodotProject
+        ls ${{ github.workspace }}
 
-    - name: Export
+    - name: Export Windows
       run: |
-        /usr/local/bin/godot/Godot_v4.2.2-stable_mono_linux.x86_64 --headless --path ${{ github.workspace }}/GodotProject --export-release "Windows Desktop" "${{ github.workspace }}/builds/Windows/windowBuild.exe"
-        ls ${{ github.workspace }}/builds
+        godot --headless --export-release "Windows Desktop" "${{ github.workspace }}/builds/Windows/windowBuild.exe"
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
       with:
         name: my_game
         path: builds/Windows
-
