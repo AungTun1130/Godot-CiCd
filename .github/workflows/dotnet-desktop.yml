@@ -45,19 +45,24 @@ on:
     branches: [ "main" ]
 env:
   GODOT_VERSION: 4.2.2
+  EXPORT_NAME: GodotProject
+  PROJECT_PATH: GodotProject
 jobs:
 
   build-window:
-    runs-on: ubuntu-20.04
-
-    container:
-      image: barichello/godot-ci:mono-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
       with:
         lfs: true
+        
+    - name: Docker login
+      run: echo $DOCKER_PASSWORD | docker login ghcr.io/aungtun1130/virtualpinballgodot:latest -u aungtun1130 --password ${{secrets.GH_PAT}}
+  
+    - name: Setup Docker
+      run: docker pull ghcr.io/aungtun1130/virtualpinballgodot:latest
 
     #- name: Set up Godot
     #  run: |
@@ -73,10 +78,11 @@ jobs:
     #    wget --no-verbose -O export_templates.zip https://downloads.tuxfamily.org/godotengine/4.2.2/mono/Godot_v4.2.2-stable_mono_export_templates.tpz
     #    unzip -d ~/.local/share/godot/export_templates export_templates.zip
     #    mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/4.2.2.stable.mono
-    - name: Setup
-      run: |
-        mkdir -v -p ~/.local/share/godot/export_templates/
-        mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
+    #- name: Setup
+    #  run: |
+    #    mkdir -v -p ~/.local/share/godot/export_templates/
+    #    mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono
+    #    dotnet --version
 
     - name: Make new directory
       run: mkdir -p ${{ github.workspace }}/builds/Windows
@@ -87,7 +93,8 @@ jobs:
 
     - name: Export Windows
       run: |
-        godot --headless --export-release "Windows Desktop" "${{ github.workspace }}/builds/Windows/windowBuild.exe"
+        cd Godot
+        godot --headless --path "${{ github.workspace }}" --export-release "Windows Desktop" "${{ github.workspace }}/builds/Windows/windowBuild.exe"
 
     - name: Upload built game
       uses: actions/upload-artifact@v2
