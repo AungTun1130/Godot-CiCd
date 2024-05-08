@@ -51,18 +51,14 @@ jobs:
 
   build-window:
     runs-on: ubuntu-latest
+    container:
+      image: aungtun1130/godot-ci-4.2.2:latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
       with:
         lfs: true
-        
-    - name: Docker login
-      run: echo $DOCKER_PASSWORD | docker login ghcr.io/aungtun1130/virtualpinballgodot:latest -u aungtun1130 --password ${{secrets.GH_PAT}}
-  
-    - name: Setup Docker
-      run: docker pull ghcr.io/aungtun1130/virtualpinballgodot:latest
 
     #- name: Set up Godot
     #  run: |
@@ -93,7 +89,6 @@ jobs:
 
     - name: Export Windows
       run: |
-        cd Godot
         godot --headless --path "${{ github.workspace }}" --export-release "Windows Desktop" "${{ github.workspace }}/builds/Windows/windowBuild.exe"
 
     - name: Upload built game
